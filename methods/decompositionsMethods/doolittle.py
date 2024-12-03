@@ -72,6 +72,7 @@ x vector = {self.x}
             for i in range(n+1,self.n):
                 if self.A[i,n] != 0:
                     self.A[[n,i],:]=self.A[[i,n],:]
+                    self.b[n],self.b[i]=self.b[i],self.b[n]
                     break
         return self.A
     
