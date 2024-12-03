@@ -5,6 +5,7 @@ from PyQt6.QtGui import QDoubleValidator,QIcon,QPixmap
 from PyQt6.QtGui import QIntValidator
 from logic.calling_method import callingMethod
 
+
 class Matrix(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
@@ -14,6 +15,7 @@ class Matrix(QWidget):
         # Main layout for the entire widget
         self.main_layout = QVBoxLayout()
         self.is_scaling_enabled = False
+        self.is_diagonaldominate_enabled=False
 
         # Top layout for the back button
         self.methodName_layout = QHBoxLayout()
@@ -194,6 +196,16 @@ class Matrix(QWidget):
         self.solve_layout.addStretch()
         self.main_layout.addLayout(self.solve_layout)
 
+
+
+
+        self.digonal_checkBox=QCheckBox("convert it to diagonal dominate (if it possible)",self)
+        self.digonal_checkBox.setStyleSheet("font-size:14px;color:black;")
+        self.digonal_checkBox.stateChanged.connect(self.update_diagonal_status)
+        self.solve_layout.addWidget(self.digonal_checkBox)
+        self.solve_layout.addStretch()
+        self.main_layout.addLayout(self.solve_layout)
+
         # Set the main layout for the widget
         self.setLayout(self.main_layout)
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -203,6 +215,10 @@ class Matrix(QWidget):
     
     def update_scaling_status(self):
         self.is_scaling_enabled = self.scalling_checkBox.isChecked()
+
+    def update_diagonal_status(self):
+        self.is_diagonaldominate_enabled = self.digonal_checkBox.isChecked()
+    
 
     def generate_intial_guess(self):
         
@@ -258,11 +274,13 @@ class Matrix(QWidget):
             self.checkbox_3.setVisible(True)
             self.text_field_2.setVisible(True)
             self.text_field_3.setVisible(True)
+            self.digonal_checkBox.setVisible(True)
         else:
             self.checkbox_2.setVisible(False)
             self.checkbox_3.setVisible(False)
             self.text_field_2.setVisible(False)
             self.text_field_3.setVisible(False)
+            self.digonal_checkBox.setVisible(False)
         
 
     def go_back_to_methods(self):
@@ -330,9 +348,9 @@ class Matrix(QWidget):
         if len(self.matrix_inputs) >= 1:
             if(self.method=="Jacobi" or self.method=="Gauss Seidel"):
                 if(self.text_field_2.text()==""):
-                    solution=callingMethod(arr=self.matrix_inputs, method=self.method, numberEquations=len(self.matrix_inputs), significantFigures=self.sfigures_input.value(),initialGuess=self.initial_Guess,AbseluteRelativeError=float(self.text_field_3.text()))
+                    solution=callingMethod(arr=self.matrix_inputs, method=self.method, numberEquations=len(self.matrix_inputs), significantFigures=self.sfigures_input.value(),initialGuess=self.initial_Guess,AbseluteRelativeError=float(self.text_field_3.text()) ,diagonalDominanceEnabled= self.is_diagonaldominate_enabled )
                 else:
-                    solution=callingMethod(arr=self.matrix_inputs, method=self.method, numberEquations=len(self.matrix_inputs), significantFigures=self.sfigures_input.value(),initialGuess=self.initial_Guess,NumberOfIterations=int(self.text_field_2.text()))
+                    solution=callingMethod(arr=self.matrix_inputs, method=self.method, numberEquations=len(self.matrix_inputs), significantFigures=self.sfigures_input.value(),initialGuess=self.initial_Guess,NumberOfIterations=int(self.text_field_2.text()),diagonalDominanceEnabled= self.is_diagonaldominate_enabled )
             else:
                 solution=callingMethod(arr=self.matrix_inputs, method=self.method, numberEquations=len(self.matrix_inputs), significantFigures=self.sfigures_input.value(), scalling=self.is_scaling_enabled)
             self.stacked_widget.setCurrentIndex(3)

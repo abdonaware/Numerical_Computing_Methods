@@ -113,6 +113,8 @@ class GaussJordan :
                 system[[i, max_index]] = system[[max_index, i]]
             self.steps += "    System after interchanging:"
             self.writeSolution(system, signifcantFigure)
+            pivot = system[i, i]
+            system[i] = system[i] / pivot
             for k in range(i+1, n):  # Forward elimination
                 factor = system[k][i] / system[i][i]
                 for j in range(i, n+1):

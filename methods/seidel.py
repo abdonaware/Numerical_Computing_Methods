@@ -83,10 +83,9 @@ class Seidel:
         self.steps += f"Given intial guess of solution as {self.initial_guess}"
         self.steps += "\n\n"
 
-        while not valid:
+        while not valid and iteration<200:
             valid = True
             iteration += 1
-        
             self.steps += "\n" 
             self.steps += f"    iteration # {iteration}"
             self.steps += "\n"
@@ -105,9 +104,10 @@ class Seidel:
                 self.steps += f")/{self.matrixA[i][i]} = {self.new[i]}"
                 self.steps+="\n"
                 if(self.new[i]==0):
-                    self.steps += "division by zero happened in relative error calculation"
-                    break
-                relative_error = abs(float(self.new[i]) - float(old[i])) / abs(self.new[i])
+                  relative_error=old[i]
+                    
+                else:
+                    relative_error = abs(float(self.new[i]) - float(old[i])) / abs(self.new[i])
 
                 self.steps+=f"        #Relative error of X{i+1} after {iteration} iteration = |{self.new[i]} - {old[i]} / {abs(self.new[i])}| ={SFCalc(relative_error,self.SignificantFigures)}"
                 self.steps+="\n"

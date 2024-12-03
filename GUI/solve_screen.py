@@ -242,6 +242,7 @@ class Solve(QWidget):
             """)
 
             res.setFixedWidth(150)
+            
 
             temp.addWidget(res)
             self.solution_layout.addLayout(temp)

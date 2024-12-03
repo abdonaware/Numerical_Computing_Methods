@@ -63,7 +63,6 @@ class Jacobi:
         self.res = self.new
 
     def solve_with_tolerance(self, tolerance):
-        tolerance /= 100
         valid = False
         iteration = 0
         self.steps += f"Given initial guess of solution as {self.old}\n\n"
@@ -80,11 +79,11 @@ class Jacobi:
                         self.new[i] -= SFCalc(float(self.matrixA[i][j]) * float(self.old[j]), self.SignificantFigures)
                         self.steps += f"+ {-1 * self.matrixA[i][j]}({self.old[j]}) "
                 self.new[i] /= SFCalc(self.matrixA[i][i], self.SignificantFigures)
-                try:
-                    relative_error = abs(float(self.new[i]) - float(self.old[i])) / abs(self.new[i])
-                except:
-                    self.steps += "\n\ndivision by zero happened in relative error calculation\n\n"
-                    break
+                if(self.new[i]==0):
+                  relative_error=self.old[i]
+                    
+                else:
+                     relative_error = abs(float(self.new[i]) - float(old[i])) / abs(self.new[i])
                 self.steps += f")/{self.matrixA[i][i]} = {SFCalc(self.new[i], self.SignificantFigures)}\n"
                 self.steps += f"           # Relative error for X{i+1} = {SFCalc(relative_error,self.SignificantFigures)}\n"
                 if relative_error > tolerance:

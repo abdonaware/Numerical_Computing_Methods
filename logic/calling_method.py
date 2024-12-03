@@ -7,7 +7,7 @@ from methods.decompositionsMethods.cholesky import Cholesky
 from methods.decompositionsMethods.crout import Crout
 import numpy as np
 
-def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigures=3, NumberOfIterations=-1, AbseluteRelativeError=-1, scalling=False):
+def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigures=3, NumberOfIterations=-1, AbseluteRelativeError=-1, scalling=False ,diagonalDominanceEnabled=False):
     matrix_values = []
     for row in arr:
         row_values = []
@@ -34,7 +34,13 @@ def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigur
     matrix = np.array(a)
     determinant = np.linalg.det(matrix)
     if(determinant==0):
-        return "There Is No Unique Solution"
+       return "error1"
+    
+    semetric = np.array_equal(matrix, matrix.T)
+    
+    if diagonalDominanceEnabled and (method == "Jacobi" or method == "Gauss Seidel"):
+        print("hihi")
+        a, b = diagonalyDominant(a, b)
 
 
     if(method=="Gauss"):
@@ -81,16 +87,12 @@ def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigur
                 solution=["Cholesky", cholesky.getSolution(), cholesky.getExcutionTime(), cholesky.getSteps()]
                 return solution
             else :
-                return "The Matrix is Not Positive Definit"
+                return "error4"
         else:
-            return "The Matrix is Not Symmetric"
+            return "error3"
 
     elif(method=="Jacobi"):
         initial_guess=[float(element) for element in initialGuess]
-        if(is_diagonally_dominant(a)==False):
-            a,b=make_diagonally_dominant(a,b)
-        if(is_diagonally_dominant(a)==False):
-            return "The Matrix is Not Diagonally Dominant"
         jacobi=Jacobi(matrixA=a,matrixB=b,initial_guess=initial_guess,Figures=significantFigures)
         if NumberOfIterations!=-1:
             jacobi.solve_with_iterations(num_iterations=NumberOfIterations)
@@ -104,10 +106,6 @@ def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigur
 
     elif(method=="Gauss Seidel"):
         initial_guess=[float(element) for element in initialGuess]
-        if(is_diagonally_dominant(a)==False):
-            a,b=make_diagonally_dominant(a,b)
-        if(is_diagonally_dominant(a)==False):
-            return "The Matrix is Not Diagonally Dominant"
         seidel = Seidel(matrixA=a,matrixB=b,initial_guess=initial_guess,Figures=significantFigures)
         if NumberOfIterations!=-1:
             seidel.solve_with_iterations(num_iterations=NumberOfIterations)
@@ -115,36 +113,25 @@ def callingMethod(arr, method, numberEquations, initialGuess=0, significantFigur
         else:
             seidel.solve_with_tolerance(tolerance=AbseluteRelativeError)
             solution=["Gauss Seidel",seidel.getSolution(),seidel.getExcutionTime(),seidel.getIterations(),seidel.getSteps()]
+
         return solution
         
     
-    
-def is_diagonally_dominant(matrix):
+def diagonalyDominant(matrix, b):
     n = len(matrix)
-    for i in range(n):
-        row_sum = sum(abs(matrix[i][j]) for j in range(n) if j != i)
-        if abs(matrix[i][i]) < row_sum:
-            return False
-    return True
-
-def make_diagonally_dominant(matrix, b):
-    matrix = np.array(matrix)  
-    b = np.array(b) 
-    original_matrix = matrix.copy()  
-    original_b = b.copy()  
-    n = len(matrix)
+    matrix = np.array(matrix, dtype=float)
+    b = np.array(b, dtype=float)
 
     for i in range(n):
         max_row = i
-        for j in range(i + 1, n):
-            if abs(matrix[j][i]) > abs(matrix[max_row][i]):
-                max_row = j
+        for r in range(i, n):
+            if abs(matrix[r][i]) >= sum(abs(matrix[r][j]) for j in range(n) if j != i):
+                max_row = r
+                break
+        
+    
         if max_row != i:
-            matrix[[i, max_row], :] = matrix[[max_row, i], :]
-            b[[i, max_row]] = b[[max_row, i]]  
-        row_sum = sum(abs(matrix[i][j]) for j in range(n) if j != i)
-        if abs(matrix[i][i]) < row_sum:
-            return original_matrix.tolist(), original_b.tolist()
-    if not is_diagonally_dominant(matrix):
-        return original_matrix.tolist(), original_b.tolist()
-    return matrix.tolist(), b.tolist()
+            matrix[[i, max_row]] = matrix[[max_row, i]]
+            b[[i, max_row]] = b[[max_row, i]]
+    
+    return matrix, b
