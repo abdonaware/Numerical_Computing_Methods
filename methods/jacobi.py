@@ -83,7 +83,7 @@ class Jacobi:
                   relative_error=self.old[i]
                     
                 else:
-                     relative_error = abs(float(self.new[i]) - float(old[i])) / abs(self.new[i])
+                     relative_error = abs(float(self.new[i]) - float(self.old[i])) / abs(self.new[i])
                 self.steps += f")/{self.matrixA[i][i]} = {SFCalc(self.new[i], self.SignificantFigures)}\n"
                 self.steps += f"           # Relative error for X{i+1} = {SFCalc(relative_error,self.SignificantFigures)}\n"
                 if relative_error > tolerance:
