@@ -13,7 +13,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Equations Solver")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 50, 800, 600)
 
         # Create QStackedWidget to manage multiple pages
         self.stacked_widget = QStackedWidget(self)

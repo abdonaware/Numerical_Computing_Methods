@@ -177,8 +177,34 @@ class NonLinearInput(QWidget):
                 button.clicked.connect(self.append_to_equation)
             self.lay_buttons.addWidget(button, row, col)
         
+        
+
         self.lay_equation.addLayout(self.lay_buttons)
         self.main_layout.addLayout(self.lay_equation)
+
+        self.solve_button = QPushButton("Solve")
+        self.solve_button.setStyleSheet(""" 
+            QPushButton {
+                background-color: #439A97;
+                color: white;
+                border-radius: 10px;
+                padding: 15px 30px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #62B6B7;
+            }
+        """)
+        self.solve_button.clicked.connect(self.solve)  # Fix the connection here
+        self.solve_button.setFixedWidth(200)
+
+        # Center the solve button
+        self.solve_layout = QHBoxLayout()
+        self.solve_layout.addWidget(self.solve_button, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.main_layout.addLayout(self.solve_layout)
+
 
         self.setLayout(self.main_layout)
 
@@ -202,8 +228,8 @@ class NonLinearInput(QWidget):
         plotter1 = Plotter(self.equation_input.text())
         try:
             plotter1.plot_equation()
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to plot the equation: {str(e)}")
+        except :
+            QMessageBox.critical(self, "Error", f"Failed to plot the equation")
 
     def display_method(self, method):
         self.method = method
@@ -211,6 +237,11 @@ class NonLinearInput(QWidget):
 
     def go_back(self):
         self.stacked_widget.setCurrentIndex(2)
+
+    def solve(self):
+        print("solve")
+        pass
+
 
 
 
